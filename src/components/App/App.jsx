@@ -1,10 +1,12 @@
 import { Component } from 'react';
 import { nanoid } from 'nanoid';
 
-import { Section } from 'components/Section/Section';
+// import { Container } from './App.styled';
+
 import { ContactForm } from 'components/ContactForm/ContactForm';
-import { Filter } from 'components/Filter/Filter';
 import { ContactList } from 'components/ContactList/ContactList';
+import { Filter } from 'components/Filter/Filter';
+import { Section } from 'components/Section/Section';
 
 export class App extends Component {
   state = {
@@ -17,6 +19,21 @@ export class App extends Component {
 
     filter: '',
   };
+
+  componentDidMount() {
+    const contacts = localStorage.getItem('contacts');
+    const parsedContacts = JSON.parse(contacts);
+    if (parsedContacts !== null) {
+      this.setState({ contacts: parsedContacts });
+    }
+  }
+
+  componentDidUpdate(_, prevState) {
+    if (this.state.contacts !== prevState.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  }
+
   addContact = ({ name, number }) => {
     const { contacts } = this.state;
 
@@ -61,7 +78,7 @@ export class App extends Component {
     const visibleContacts = this.getVisibelContats();
 
     return (
-      <>
+      <div>
         <Section title={'Phonebook'}>
           <ContactForm onSubmit={this.addContact} />
         </Section>
@@ -73,7 +90,7 @@ export class App extends Component {
             onDeleteContact={this.deleteContact}
           />
         </Section>
-      </>
+      </div>
     );
   }
 }
